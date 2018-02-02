@@ -62,15 +62,15 @@ void main() {
 
 						} else {
 							/* getting pid of third child and writing into the file */
-                            	FILE *fp = fopen("kill.sh","w+");
-                             	fprintf(fp,"%s\n","#/bin/bash");
-						     	fprintf(fp,"kill -9 %d\n",childThree);
-				            	fprintf(fp,"kill -9 %d\n",childTwo);
-			                	fprintf(fp,"kill -9 %d\n",childOne);
-			                   	fprintf(fp,"kill -9 %d\n",getpid());
-                                fputs("rm kill.sh",fp);
-                                system("chmod +x kill.sh");
-                             	fclose(fp); 
+                            	                         FILE *fp = fopen("kill.sh","w+");
+                             	                         fprintf(fp,"%s\n","#/bin/bash");
+						     	 fprintf(fp,"kill -9 %d\n",childThree);
+				            	         fprintf(fp,"kill -9 %d\n",childTwo);
+			                	         fprintf(fp,"kill -9 %d\n",childOne);
+			                   	         fprintf(fp,"kill -9 %d\n",getpid());
+                                                         fputs("rm kill.sh",fp);
+                                                         system("chmod +x kill.sh");
+                             	                         fclose(fp); 
 
 						}
 
@@ -116,4 +116,4 @@ void main() {
  *
  */
 
-
+a

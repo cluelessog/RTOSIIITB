@@ -31,9 +31,6 @@ void main() {
 	printf("\ng_first = %p\n", &g_first);
 	printf("\ng_second = %p\n", &g_second);
 	printf("\ng_third = %p\n", &g_third);
-	/* creating a file pointer to write into scr.sh */
-	FILE *fp = fopen("scr.sh","w+");
-	fprintf(fp,"%s\n","#/bin/bash");
 	/* creating three child process */
 	pid_t childOne, childTwo, childThree;
 	childOne = fork();
@@ -65,37 +62,23 @@ void main() {
 
 						} else {
 							/* getting pid of third child and writing into the file */
-							fprintf(fp,"kill -9 %d\n",childThree);
+                            	FILE *fp = fopen("kill.sh","w+");
+                             	fprintf(fp,"%s\n","#/bin/bash");
+						     	fprintf(fp,"kill -9 %d\n",childThree);
+				            	fprintf(fp,"kill -9 %d\n",childTwo);
+			                	fprintf(fp,"kill -9 %d\n",childOne);
+			                   	fprintf(fp,"kill -9 %d\n",getpid());
+                                fputs("rm kill.sh",fp);
+                                system("chmod +x kill.sh");
+                             	fclose(fp); 
 
 						}
 
 					}else{
 						printf("\nFork was unsuccessful\n");
 					}
-					/* getting pid of second child and writing into the file */
-					fprintf(fp,"kill -9 %d\n",childTwo);
 				}
-				/* getting pid of first child and writing into the file */
-				fprintf(fp,"kill -9 %d\n",childOne);
-				/* writing the pid of the parent into the file */
-				fprintf(fp,"kill -9 %d\n",getpid());
-				fclose(fp);
-				/* copying the content of scr.sh into kill.sh to avoid text file busy error */
-				FILE *fd = fopen("scr.sh","r");
-				FILE *fw = fopen("kill.sh","w+");
-				char ch[100];
-				while(!(feof(fd))){
-					fgets(ch,100,fd);
-					fprintf(fw,"%s",ch);
-				}
-				/* this command removes the kill.sh after it is being executed */
-				fputs("rm kill.sh",fw);
-				fclose(fd);
-				fclose(fw);
-				/* removing scr.sh as it is no longer needed */
-				system("rm scr.sh");
-				/*giving execution permission */
-				system("chmod +x kill.sh");
+
 				while (1) {}
 
 			}else{

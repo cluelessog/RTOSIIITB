@@ -3,6 +3,8 @@
 #include<stdlib.h>
 #include<sys/time.h>
 #include<unistd.h>
+#include<semaphore.h>
+sem_t lock;
 //global variables
 int a,b,c;
 
@@ -29,6 +31,7 @@ void *Thread1Proc()
 		printf("\na = %d\n",a);
 		printf("\nb = %d\n",b);
 		printf("\nc = %d\n",c);
+		sem_post(&lock);
 	}
 }
 void *Thread2Proc()
@@ -42,10 +45,13 @@ void *Thread2Proc()
 	printf("\na = %p\n",&a);
 	printf("\nb = %p\n",&b);
 	printf("\nc = %p\n",&c);
+	//sem_wait(&lock);
 	//reinitialising the global variables
-	a = 7,b = 8, c = 9;
+	//a = 7,b = 8, c = 9;
 	while(1)
 	{
+	    sem_wait(&lock);
+	    a = 7,b = 8, c = 9;
 		printf("\nvalue of local variable in thread 2\n");
 		printf("\ni = %d\n",i);
 		printf("\nj = %d\n",j);
@@ -54,6 +60,7 @@ void *Thread2Proc()
 		printf("\na = %d\n",a);
 		printf("\nb = %d\n",b);
 		printf("\nc = %d\n",c);
+		sem_post(&lock);
 	}
 }
 void *Thread3Proc()
@@ -67,18 +74,22 @@ void *Thread3Proc()
 	printf("\na = %p\n",&a);
 	printf("\nb = %p\n",&b);
 	printf("\nc = %p\n",&c);
+	//sem_wait(&lock);
 	//reinitialising the global variables
-	a = 10, b = 11 , c = 12;
+	//a = 10, b = 11 , c = 12;
 	while(1)
 	{
-		printf("\nvalue of local variable in thread 2\n");
+	    sem_wait(&lock);
+	    a = 10, b = 11 , c = 12;
+		printf("\nvalue of local variable in thread 3\n");
 		printf("\ni = %d\n",i);
 		printf("\nj = %d\n",j);
 		printf("\nk = %d\n",k);
-		printf("\nvalue of global variable in thread 2\n");
+		printf("\nvalue of global variable in thread 3\n");
 		printf("\na = %d\n",a);
 		printf("\nb = %d\n",b);
 		printf("\nc = %d\n",c);
+		sem_post(&lock);
 	}
 }
 int main()
@@ -97,10 +108,18 @@ int main()
 	pthread_join(thread2,NULL);
 	pthread_join(thread3,NULL);
 
-
 }
 
 /* Observations and conclusions
+ * Here semaphores are used which are signalling and synchronisation mechanisms.
+ * sem_wait() makes the caller wait untill the value is greater than 1 and once the condition evaluates to true
+ * it allows the thread to access critical section and decrement the value by 1.
+ * sem_post() increments the value again by one thereby allowing other threads to access the critical section.
+ * In this case we don't see random printing instead the output is synchronised. Only one thread at a time
+ * can access the critical section. Other threads are in wait state.
+ * It's like talking on a phone booth. When a person enters in a phone booth(thread),he holds the door(lock),then he
+* talk to the other person with privacy. Once he is done talking
+ * he releases the door (unlocks) thereby allowing other people to use phone booth(other threads).
  * There is  no specific order for printing the addresses and values of the global and local variables.
  * The reason is, threads run in a concurrent manner i.e they run in parallel. So the order of execution
  * for threads is not same everytime. Also the output is different everytime because values set for global
@@ -118,6 +137,5 @@ int main()
  * https://stackoverflow.com/questions/41632073/do-threads-share-local-variables
  * https://cs.stackexchange.com/questions/48345/what-threads-share-in-general
  * https://stackoverflow.com/questions/7387620/does-local-variable-in-thread-function-have-separe-copy-according-to-thread
+ * http://pages.cs.wisc.edu/~remzi/Classes/537/Fall2008/Notes/threads-semaphores.txt
  */
-
-

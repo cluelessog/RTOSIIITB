@@ -1,0 +1,4 @@
+compile using the following command
+gcc filename.c -o filename -lpulse -lpthread -lpulse-simple
+start the server first
+provide ip address as commandline argument when running the client
